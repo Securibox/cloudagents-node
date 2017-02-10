@@ -7,8 +7,8 @@ var CloudAgents = require('../');
 var eq = assert.strictEqual;
 
 var environment = CloudAgents.environments.testenv;
-var api_username = 'sbxtestclient';
-var api_password = 'dinosaursr';
+var api_username = 'username';
+var api_password = 'password';
 
 var client = new CloudAgents.Client(api_username, api_password, environment);
 
@@ -92,13 +92,13 @@ describe('Accounts', function() {
           credentials: [
               {
                   position: 0,
-                  value: "sgavdsilva@gmail.com",
+                  value: "username@test.com",
                   alg: null
 
               },
               {
                   position: 1,
-                  value: "Password12$",
+                  value: "p@ssword",
                   alg: null
               }
           ]  
