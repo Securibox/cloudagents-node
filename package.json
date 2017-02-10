@@ -1,0 +1,34 @@
+{
+  "name": "cloudagents",
+  "version": "0.0.1",
+  "description": "A node.js client for the Securibox Cloud Agents API",
+  "keywords": [
+    "Securibox",
+    "Cloud Agents",
+    "Agents",
+    "SCA",
+    "Securibox Cloud Agents"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/securibox/cloudagents-node.git"
+  },
+  "bugs": {
+    "url": "http://github.com/securibox/cloudagents-node/issues"
+  },
+  "licenses": [
+    {
+      "type": "GNU GPL",
+      "url": "https://github.com/securibox/cloudagents-node/blob/master/LICENSE"
+    }
+  ],
+  "dependencies": {
+    "ramda": "0.19.x",
+    "request": "2.74.x",
+    "querystring": "0.2.x"
+  },
+  "devDependencies": {
+    "assert": "1.4.x",
+    "mocha": "2.3.x"
+  }
+}
