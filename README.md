@@ -134,4 +134,4 @@ $ make test
 
 [1]: https://sca.securibox.eu
 [2]: https://sca.securibox.eu/doc.html
-[3]: https://github.com/Securibox/cloudagents-node/blob/master/README.md
+[3]: https://github.com/Securibox/cloudagents-node/blob/master/LICENSE
