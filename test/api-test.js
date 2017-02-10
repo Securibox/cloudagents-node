@@ -98,7 +98,11 @@ describe('Accounts', function() {
               },
               {
                   position: 1,
+<<<<<<< HEAD
                   value: "p@ssword",
+=======
+                  value: "p@ssword12",
+>>>>>>> origin/master
                   alg: null
               }
           ]  
