@@ -1,6 +1,7 @@
 cloudagents-node
 ==============
 [![NPM Version][npm-image]][npm-url]
+
 A node.js client library for the [Securibox Cloud Agents API][1]
 
 ## Install
