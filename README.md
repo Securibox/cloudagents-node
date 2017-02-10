@@ -1,6 +1,6 @@
 cloudagents-node
 ==============
-
+[![NPM Version][npm-image]][npm-url]
 A node.js client library for the [Securibox Cloud Agents API][1]
 
 ## Install
@@ -135,3 +135,5 @@ $ make test
 [1]: https://sca.securibox.eu
 [2]: https://sca.securibox.eu/doc.html
 [3]: https://github.com/Securibox/cloudagents-node/blob/master/LICENSE
+[npm-image]: https://img.shields.io/badge/npm-0.0.1-brightgreen.svg
+[npm-url]: https://npmjs.org/package/cloudagents
