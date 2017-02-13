@@ -76,7 +76,7 @@ Collect invoices from DropBox:
 ```javascript
 var cloudagents = require('cloudagents');
 
-var environment = CloudAgents.environments.testenv;
+var environment = "https://api-cloudagents.securibox.eu/api/v1/";
 
 // Initialize client
 var client = new cloudagents.Client('api_username', 'api_password', environment);
@@ -103,7 +103,7 @@ var account = {
         }
 
 //Create account and launch synchronization
-client.createAccount(account, environment, function(err, res) {
+client.createAccount(account, function(err, res) {
     if (err != null) {
         console.error(err);
     } else {
@@ -113,7 +113,7 @@ client.createAccount(account, environment, function(err, res) {
 
 // Pool synchronization status to until we get a final status
 var interval = setInterval(function(){
-    client.getLastSynchronizationByAccount(account.customerAccountId, environment, function(err, res){            
+    client.getLastSynchronizationByAccount(account.customerAccountId, function(err, res){            
         eq(err, null);
             if(res.synchronizationState == CloudAgents.enums.synchronizationState.PendingAcknowledgement ||
                 res.synchronizationState == CloudAgents.enums.synchronizationState.Completed ||
