@@ -30,32 +30,32 @@ var cloudagents = require('cloudagents');
 var client = new cloudagents.Client(api_username, api_password, cloudagents_env);
 
 //list all categories
-client.getCategories(env, callback);
+client.getCategories(callback);
 
 //list all agents
-client.getAgents(env, callback);
+client.getAgents(callback);
 //list agents by category
-client.getAgentsByCategory(category_id, env, callback);
+client.getAgentsByCategory(category_id, callback);
 //search agents
-client.searchAgents(options, env, callback);
+client.searchAgents(options, callback);
 
 //list all accounts
-client.getAllAccounts(options, env, callback);
+client.getAllAccounts(options, callback);
 //list accounts by agent
-client.getAllAccounts(options, agent_id, env, callback);
+client.getAllAccounts(options, agent_id, callback);
 //create account
-client.createAccount(account, env, callback);
+client.createAccount(account, callback);
 //delete account
-client.deleteAccount(account_id, env, callback);
+client.deleteAccount(account_id, callback);
 //synchronize account
-client.synchronizeAccount(account_id, user_id, env, callback);
+client.synchronizeAccount(account_id, user_id, callback);
 //search account
-client.searchAccounts(options, env, callback);
+client.searchAccounts(options, callback);
 
 //get all syncrhonization for an account
-client.getSynchronizationsByAccount(options, account_id, env, callback);
+client.getSynchronizationsByAccount(options, account_id, callback);
 //get all syncrhonization for an account
-client.getLastSynchronizationByAccount(account_id, env, callback);
+client.getLastSynchronizationByAccount(account_id, callback);
 ```
 
 All parameters except options are required. If the options parameter is omitted, the last argument to the function will be interpreted as the callback.
@@ -115,9 +115,9 @@ client.createAccount(account, environment, function(err, res) {
 var interval = setInterval(function(){
     client.getLastSynchronizationByAccount(account.customerAccountId, environment, function(err, res){            
         eq(err, null);
-        if(res.synchronizationState == 5 ||
-            res.synchronizationState == 6 ||
-            res.synchronizationState == 7){
+            if(res.synchronizationState == CloudAgents.enums.synchronizationState.PendingAcknowledgement ||
+                res.synchronizationState == CloudAgents.enums.synchronizationState.Completed ||
+                res.synchronizationState == CloudAgents.enums.synchronizationState.ReportFailed){
                 clearInterval(interval);
             }
     })

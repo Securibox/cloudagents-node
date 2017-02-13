@@ -6,10 +6,45 @@ var request = require('request');
 
 var CloudAgents = module.exports = {};
 
-CloudAgents.environments = {
-  production: 'https://multitenant.securibox.eu/api/v1',
-  testenv: 'https://sca-testenv.securibox.eu/api/v1',
-};
+CloudAgents.enums = {
+    synchronizationState:{
+        NewAccount: 0,
+        Created: 1,
+        Running: 2,
+        AgentFailed: 3,
+        Delivering: 4,
+        PendingAcknowledgement: 5,
+        Completed: 6,
+        ReportFailed: 7
+    },
+    synchronizationStateDetails:{
+        NewAccount: 1,
+        Completed: 2,
+        CompletedNothingToDownload: 3,
+        CompletedNothingNewToDownload: 4,
+        CompletedWithMissingDocs: 5,
+        CompletedWithErrors: 6,
+        WrongCredentials: 7,
+        UnexpectedAccountData: 8,
+        Scheduled: 9,
+        Pending: 10,
+        InProgress: 11,
+        DematerialisationNeeded: 12,
+        CheckAccount: 13,
+        AccountBlocked: 14,
+        AdditionalAuthenticationRequired:15,
+        LoginPageChanged: 16,
+        WelcomePageChanged: 17,
+        WebsiteInMaintenance: 18,
+        WebsiteChanged: 19,
+        ResetPasswordWarning: 20,
+        ResetPasswordRequired: 21,
+        ServerUnavailable: 22,
+        PersonalNotification: 23,
+        TemporaryServerError: 24,
+        CaptchaFound: 25
+    }
+}
 
 CloudAgents.Client = function(username, secret, env) {
   if (R.isNil(username)) {
@@ -20,9 +55,8 @@ CloudAgents.Client = function(username, secret, env) {
     throw new Error('Missing "secret"');
   }
 
-  if (env !== CloudAgents.environments.production &&
-      env !== CloudAgents.environments.testenv) {
-    throw new Error('Invalid Cloud Agents environment');
+  if (R.isNil(secret)) {
+    throw new Error('Missing "env"');
   }
 
   this.username = username;
@@ -59,29 +93,29 @@ CloudAgents.Client.prototype._authenticatedRequest = function(options, callback)
 };
 
 //Categories
-CloudAgents.Client.prototype.getCategories = function(env, callback){
+CloudAgents.Client.prototype.getCategories = function(callback){
     this._authenticatedRequest({
-        uri: env + '/categories',
+        uri: this.env + '/categories',
         method: 'GET'
     }, callback)
 }
 
 //Agents
-CloudAgents.Client.prototype.getAgentsByCategory = function(category_id, env, callback){
+CloudAgents.Client.prototype.getAgentsByCategory = function(category_id, callback){
     this._authenticatedRequest({
-        uri: env + '/categories/' + category_id + "/agents",
+        uri: this.env + '/categories/' + category_id + "/agents",
         method: 'GET'
     }, callback)
 }
 
-CloudAgents.Client.prototype.getAgents = function(env, callback){
+CloudAgents.Client.prototype.getAgents = function(callback){
     this._authenticatedRequest({
-        uri: env + '/agents',
+        uri: this.env + '/agents',
         method: 'GET'
     }, callback)
 }
 
-CloudAgents.Client.prototype.searchAgents = function(options, env, callback){
+CloudAgents.Client.prototype.searchAgents = function(options, callback){
     var isNullValue = function(val, key) { return !R.isNil(val); }
     var qs = querystring.stringify(R.pickBy(isNullValue, {
         country: options.country,
@@ -89,13 +123,13 @@ CloudAgents.Client.prototype.searchAgents = function(options, env, callback){
         q: options.query
     }));
     this._authenticatedRequest({
-        uri: env + '/agents/search?' + qs,
+        uri: this.env + '/agents/search?' + qs,
         method: 'GET'
     }, callback)
 }
 
 //Accounts
-CloudAgents.Client.prototype.getAllAccounts = function(options, env, callback){
+CloudAgents.Client.prototype.getAllAccounts = function(options, callback){
     var isNullValue = function(val, key) { return !R.isNil(val); }
     var qs = querystring.stringify(R.pickBy(isNullValue, {
         agentId: options.agentId,
@@ -105,40 +139,40 @@ CloudAgents.Client.prototype.getAllAccounts = function(options, env, callback){
     }));
 
     this._authenticatedRequest({
-        uri: env + '/accounts?' + qs,
+        uri: this.env + '/accounts?' + qs,
         method: 'GET'
     }, callback)
 }
 
-CloudAgents.Client.prototype.getAccountsByAgent = function(options, agent_id, env, callback){
+CloudAgents.Client.prototype.getAccountsByAgent = function(options, agent_id, callback){
     var isNullValue = function(val, key) { return !R.isNil(val); }
     var qs = querystring.stringify(R.pickBy(isNullValue, {
         skip: options.skip,
         take: options.take
     }));
     this._authenticatedRequest({
-        uri: env + '/agents/' + agent_id + '/accounts?' + qs,
+        uri: this.env + '/agents/' + agent_id + '/accounts?' + qs,
         method: 'GET'
     }, callback)
 }
 
-CloudAgents.Client.prototype.getAccount = function(account_id, env, callback){
+CloudAgents.Client.prototype.getAccount = function(account_id, callback){
     this._authenticatedRequest({
-        uri: env + '/accounts/' + account_id,
+        uri: this.env + '/accounts/' + account_id,
         method: 'GET'
     }, callback)
 }
 
-CloudAgents.Client.prototype.deleteAccount = function(account_id, env, callback){
+CloudAgents.Client.prototype.deleteAccount = function(account_id, callback){
     this._authenticatedRequest({
-        uri: env + '/accounts/' + account_id,
+        uri: this.env + '/accounts/' + account_id,
         method: 'DELETE'
     }, callback)
 }
 
-CloudAgents.Client.prototype.createAccount = function(account, env, callback){
+CloudAgents.Client.prototype.createAccount = function(account, callback){
     this._authenticatedRequest({
-        uri: env + '/accounts',
+        uri: this.env + '/accounts',
         method: 'POST',
         body: {
             'synchronize':true,
@@ -147,9 +181,9 @@ CloudAgents.Client.prototype.createAccount = function(account, env, callback){
     }, callback)
 }
 
-CloudAgents.Client.prototype.synchronizeAccount = function(account_id, user_id, env, callback){
+CloudAgents.Client.prototype.synchronizeAccount = function(account_id, user_id, callback){
     this._authenticatedRequest({
-        uri: env + '/accounts/' + account_id + "/synchronizations",
+        uri: this.env + '/accounts/' + account_id + "/synchronizations",
         method: 'POST',
         body: {
             'customerAccountId': account_id,
@@ -159,7 +193,7 @@ CloudAgents.Client.prototype.synchronizeAccount = function(account_id, user_id, 
     }, callback)
 }
 
-CloudAgents.Client.prototype.searchAccounts = function(options, env, callback){
+CloudAgents.Client.prototype.searchAccounts = function(options, callback){
     var isNullValue = function(val, key) { return !R.isNil(val); }
     var qs = querystring.stringify(R.pickBy(isNullValue, {
         agentId: options.agentId,
@@ -168,26 +202,26 @@ CloudAgents.Client.prototype.searchAccounts = function(options, env, callback){
         take: options.take
     }));
     this._authenticatedRequest({
-        uri: env + '/accounts/search?' + qs,
+        uri: this.env + '/accounts/search?' + qs,
         method: 'GET'
     }, callback)
 }
 
-CloudAgents.Client.prototype.getSynchronizationsByAccount = function(options, account_id, env, callback){
+CloudAgents.Client.prototype.getSynchronizationsByAccount = function(options, account_id, callback){
     var isNullValue = function(val, key) { return !R.isNil(val); }
     var qs = querystring.stringify(R.pickBy(isNullValue, {
         startDate : options.startDate,
         endDate : options.endDate
     }));
     this._authenticatedRequest({
-        uri: env + '/accounts/' + account_id + "/synchronizations?" + qs,
+        uri: this.env + '/accounts/' + account_id + "/synchronizations?" + qs,
         method: 'GET'
     }, callback)
 }
 
-CloudAgents.Client.prototype.getLastSynchronizationByAccount = function(account_id, env, callback){
+CloudAgents.Client.prototype.getLastSynchronizationByAccount = function(account_id, callback){
     this._authenticatedRequest({
-        uri: env + '/accounts/' + account_id + '/synchronizations/last',
+        uri: this.env + '/accounts/' + account_id + '/synchronizations/last',
         method: 'GET'
     }, callback)
 }

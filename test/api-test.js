@@ -6,7 +6,7 @@ var CloudAgents = require('../');
 
 var eq = assert.strictEqual;
 
-var environment = CloudAgents.environments.testenv;
+var environment = 'https://sca-testenv.securibox.eu/api/v1/';
 var api_username = 'username';
 var api_password = 'password';
 
@@ -14,7 +14,7 @@ var client = new CloudAgents.Client(api_username, api_password, environment);
 
 describe('Categories', function() {
   it('List all categories', function(done) {
-        client.getCategories(environment, function(err, res) {
+        client.getCategories(function(err, res) {
             eq(err, null);
 
             assert(R.is(Array, res));
@@ -27,7 +27,7 @@ describe('Categories', function() {
 describe('Agents', function() {
   it('List all agents', function(done) {
       this.timeout(0);
-        client.getAgents(environment, function(err, res) {
+        client.getAgents(function(err, res) {
             eq(err, null);
 
             assert(R.is(Array, res));
@@ -41,7 +41,7 @@ describe('Agents', function() {
     //     var options = {
     //         country: "PT" 
     //     }
-    //     client.searchAgents(options, environment, function(err, res) {
+    //     client.searchAgents(options, function(err, res) {
     //         eq(err, null);
     //         assert(R.is(Array, res));
     //         var frenchAgent = R.find(R.propEq('id', 'ea23933398ae41418b50b8097742346b'))(res);
@@ -55,7 +55,7 @@ describe('Agents', function() {
         var options = {
             culture: "en-GB" 
         }
-        client.searchAgents(options, environment, function(err, res) {
+        client.searchAgents(options, function(err, res) {
             eq(err, null);
             assert(R.is(Array, res));
             assert(res[0].description.indexOf("pour collecter") == -1, "The detected culture is fr-FR")
@@ -66,7 +66,7 @@ describe('Agents', function() {
     });
 
     it('Get agents by category [Finance]', function(done) {
-        client.getAgentsByCategory("c83e6fbc06433f54cea00d8bd6fb2395", environment, function(err, res) {
+        client.getAgentsByCategory("c83e6fbc06433f54cea00d8bd6fb2395", function(err, res) {
             eq(err, null);
 
             assert(R.is(Array, res));
@@ -103,7 +103,7 @@ describe('Accounts', function() {
               }
           ]  
         }
-        client.createAccount(account, environment, function(err, res) {
+        client.createAccount(account, function(err, res) {
             eq(err, null);
             assert(R.is(Object, res));
             assert(res.agentId == agent_id && res.name == "Test BricoPrive", "The returned account is not correct.");
@@ -113,7 +113,7 @@ describe('Accounts', function() {
 
     it('Get BricoPrive account synchronization', function(done) {
         this.timeout(0);
-        client.getLastSynchronizationByAccount(account_id, environment, function(err, res){
+        client.getLastSynchronizationByAccount(account_id, function(err, res){
             eq(err, null);
             assert(R.is(Object, res));
             assert(res.customerAccountId == account_id && res.synchronizationStateDetails >= 0, "The synchronization isn't working.");
@@ -126,11 +126,11 @@ describe('Accounts', function() {
     it('Complete BricoPrive account synchronization', function(done) {
         this.timeout(300000)
         var interval = setInterval(function(){
-            client.getLastSynchronizationByAccount(account_id, environment, function(err, res){            
+            client.getLastSynchronizationByAccount(account_id, function(err, res){            
                 eq(err, null);
-                if(res.synchronizationState == 5 ||
-                    res.synchronizationState == 6 ||
-                    res.synchronizationState == 7){
+                if(res.synchronizationState == CloudAgents.enums.synchronizationState.PendingAcknowledgement ||
+                    res.synchronizationState == CloudAgents.enums.synchronizationState.Completed ||
+                    res.synchronizationState == CloudAgents.enums.synchronizationState.ReportFailed){
                         clearInterval(interval);
                         done();
                     }
@@ -140,7 +140,7 @@ describe('Accounts', function() {
 
     it('Delete BricoPrive account', function(done){
         this.timeout(0);
-        client.deleteAccount(account_id, environment, function(err, res){
+        client.deleteAccount(account_id, function(err, res){
             eq(err, null);
             done();
         });
