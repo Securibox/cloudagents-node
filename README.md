@@ -12,7 +12,7 @@ $ npm install cloudagents
 ## Getting started
 The module supports all Cloud Agents API endpoints. For complete information about the API, head to the [online documentation][2].
 
-## endpoints
+## Endpoints
 
 All endpoints require a valide username and password provided by the Securibox team to access.
 
