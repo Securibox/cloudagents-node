@@ -227,3 +227,25 @@ CloudAgents.Client.prototype.getLastSynchronizationByAccount = function(account_
 }
 
 
+CloudAgents.Client.prototype.getDocument = function(document_id, callback){
+    this._authenticatedRequest({
+        uri: this.env + '/documents/' + document_id,
+        method: 'GET'
+    }, callback)
+}
+
+CloudAgents.Client.prototype.searchDocuments = function(options, callback){
+    var isNullValue = function(val, key) { return !R.isNil(val); }
+    var qs = querystring.stringify(R.pickBy(isNullValue, {
+        customerAccountId : options.customerAccountId,
+        customerUserId: options.customerUserId,
+        pendingOnly : options.pendingOnly,
+        includeContent : options.includeContent
+    }));
+    this._authenticatedRequest({
+        uri: this.env + '/documents/search?' + qs,
+        method: 'GET'
+    }, callback)
+}
+
+
