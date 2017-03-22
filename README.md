@@ -56,6 +56,11 @@ client.searchAccounts(options, callback);
 client.getSynchronizationsByAccount(options, account_id, callback);
 //get all syncrhonization for an account
 client.getLastSynchronizationByAccount(account_id, callback);
+
+//search documents by account, user, pending with or without content
+client.searchDocuments(options, callback)
+//get a specific downloaded document
+client.getDocument(document_id, callback)
 ```
 
 All parameters except options are required. If the options parameter is omitted, the last argument to the function will be interpreted as the callback.
