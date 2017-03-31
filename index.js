@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 var querystring = require('querystring');
 var R = require('ramda');
@@ -44,7 +44,7 @@ CloudAgents.enums = {
         TemporaryServerError: 24,
         CaptchaFound: 25
     }
-}
+};
 
 CloudAgents.Client = function(username, secret, env) {
   if (R.isNil(username)) {
@@ -93,27 +93,47 @@ CloudAgents.Client.prototype._authenticatedRequest = function(options, callback)
 };
 
 //Categories
-CloudAgents.Client.prototype.getCategories = function(callback){
+CloudAgents.Client.prototype.getCategories = function(options, callback){
+    if(!options){
+        options = {
+            culture: null
+        };
+    }
+    var isNullValue = function(val, key) { return !R.isNil(val); };
+    var qs = querystring.stringify(R.pickBy(isNullValue, {
+        culture: options.culture,
+    }));
     this._authenticatedRequest({
         uri: this.env + '/categories',
         method: 'GET'
-    }, callback)
-}
+    }, callback);
+};
 
 //Agents
 CloudAgents.Client.prototype.getAgentsByCategory = function(category_id, callback){
     this._authenticatedRequest({
         uri: this.env + '/categories/' + category_id + "/agents",
         method: 'GET'
-    }, callback)
-}
+    }, callback);
+};
 
-CloudAgents.Client.prototype.getAgents = function(callback){
+CloudAgents.Client.prototype.getAgents = function(options, callback){
+    if(!options){
+        options = {
+            includeLogo: null,
+            culture: null
+        };
+    }
+    var isNullValue = function(val, key) { return !R.isNil(val); }
+    var qs = querystring.stringify(R.pickBy(isNullValue, {
+        includeLogo: options.includeLogo,
+        culture: options.culture,
+    }));
     this._authenticatedRequest({
-        uri: this.env + '/agents',
+        uri: this.env + '/agents?' + qs,
         method: 'GET'
-    }, callback)
-}
+    }, callback);
+};
 
 CloudAgents.Client.prototype.searchAgents = function(options, callback){
     var isNullValue = function(val, key) { return !R.isNil(val); }
@@ -125,8 +145,8 @@ CloudAgents.Client.prototype.searchAgents = function(options, callback){
     this._authenticatedRequest({
         uri: this.env + '/agents/search?' + qs,
         method: 'GET'
-    }, callback)
-}
+    }, callback);
+};
 
 //Accounts
 CloudAgents.Client.prototype.getAllAccounts = function(options, callback){
@@ -141,8 +161,8 @@ CloudAgents.Client.prototype.getAllAccounts = function(options, callback){
     this._authenticatedRequest({
         uri: this.env + '/accounts?' + qs,
         method: 'GET'
-    }, callback)
-}
+    }, callback);
+};
 
 CloudAgents.Client.prototype.getAccountsByAgent = function(options, agent_id, callback){
     var isNullValue = function(val, key) { return !R.isNil(val); }
@@ -153,22 +173,22 @@ CloudAgents.Client.prototype.getAccountsByAgent = function(options, agent_id, ca
     this._authenticatedRequest({
         uri: this.env + '/agents/' + agent_id + '/accounts?' + qs,
         method: 'GET'
-    }, callback)
-}
+    }, callback);
+};
 
 CloudAgents.Client.prototype.getAccount = function(account_id, callback){
     this._authenticatedRequest({
         uri: this.env + '/accounts/' + account_id,
         method: 'GET'
-    }, callback)
-}
+    }, callback);
+};
 
 CloudAgents.Client.prototype.deleteAccount = function(account_id, callback){
     this._authenticatedRequest({
         uri: this.env + '/accounts/' + account_id,
         method: 'DELETE'
-    }, callback)
-}
+    }, callback);
+};
 
 CloudAgents.Client.prototype.createAccount = function(account, callback){
     this._authenticatedRequest({
@@ -178,20 +198,29 @@ CloudAgents.Client.prototype.createAccount = function(account, callback){
             'synchronize':true,
             'account': account
         }
-    }, callback)
-}
+    }, callback);
+};
 
-CloudAgents.Client.prototype.synchronizeAccount = function(account_id, user_id, callback){
+
+CloudAgents.Client.prototype.modifyAccount = function(account_id, account, callback){
+    this._authenticatedRequest({
+        uri: this.env + '/accounts/' + account_id,
+        method: 'PUT',
+        body: account
+    }, callback);
+};
+
+CloudAgents.Client.prototype.synchronizeAccount = function(account_id, user_id, isforced, callback){
     this._authenticatedRequest({
         uri: this.env + '/accounts/' + account_id + "/synchronizations",
         method: 'POST',
         body: {
             'customerAccountId': account_id,
             'customerUserId': user_id,
-            'forced': false
+            'forced': isforced
         }
-    }, callback)
-}
+    }, callback);
+};
 
 CloudAgents.Client.prototype.searchAccounts = function(options, callback){
     var isNullValue = function(val, key) { return !R.isNil(val); }
@@ -223,8 +252,8 @@ CloudAgents.Client.prototype.getLastSynchronizationByAccount = function(account_
     this._authenticatedRequest({
         uri: this.env + '/accounts/' + account_id + '/synchronizations/last',
         method: 'GET'
-    }, callback)
-}
+    }, callback);
+};
 
 
 CloudAgents.Client.prototype.getDocument = function(document_id, callback){
@@ -245,7 +274,57 @@ CloudAgents.Client.prototype.searchDocuments = function(options, callback){
     this._authenticatedRequest({
         uri: this.env + '/documents/search?' + qs,
         method: 'GET'
-    }, callback)
-}
+    }, callback);
+};
+
+CloudAgents.Client.prototype.getDocumentsByAccount = function(options, account_id, callback){
+    var isNullValue = function(val, key) { return !R.isNil(val); };
+    var qs = querystring.stringify(R.pickBy(isNullValue, {
+        pendingOnly : options.pendingOnly,
+        includeContent: options.includeContent
+    }));
+    this._authenticatedRequest({
+        uri: this.env + '/accounts/' + account_id + '/documents?' + qs,
+        method: 'GET'
+    }, callback);
+};
+
+CloudAgents.Client.prototype.acknowledgeDocumentDelivery = function(document_id, callback){
+    this._authenticatedRequest({
+        uri: this.env + '/documents/' + document_id + '/ack',
+        method: 'PUT',
+        body: {
+            id: document_id
+        }
+    }, callback);
+};
+
+
+CloudAgents.Client.prototype.acknowledgeSynchronizationForAccount = function(account_id, acknowledgement, callback){
+    this._authenticatedRequest({
+        uri: this.env + '/synchronizations/' + account_id + '/ack',
+        method: 'PUT',
+        body: acknowledgement
+    }, callback);
+};
+
+
+CloudAgents.Client.prototype.searchSynchronizations = function(options, callback){
+    var isNullValue = function(val, key) { return !R.isNil(val); };
+    var qs = querystring.stringify(R.pickBy(isNullValue, {
+        customerAccountId : options.query.customerAccountId,
+        customerUserId : options.query.customerUserId,
+        startDate : options.query.startDate,
+        endDate : options.query.endDate,
+        skip : options.query.skip,
+        take : options.query.take
+    }));
+    this._authenticatedRequest({
+        uri: this.env + '/synchronizations/search?' + qs,
+        method: 'GET'
+    }, callback);
+};
+
+
 
 

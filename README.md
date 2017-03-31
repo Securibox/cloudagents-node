@@ -45,6 +45,8 @@ client.getAllAccounts(options, callback);
 client.getAllAccounts(options, agent_id, callback);
 //create account
 client.createAccount(account, callback);
+//modify account
+client.modifyAccount(account_id, account, callback);
 //delete account
 client.deleteAccount(account_id, callback);
 //synchronize account
@@ -52,15 +54,25 @@ client.synchronizeAccount(account_id, user_id, callback);
 //search account
 client.searchAccounts(options, callback);
 
+//search synchronizations
+client.searchSynchronizations(options, callback)
 //get all syncrhonization for an account
 client.getSynchronizationsByAccount(options, account_id, callback);
 //get all syncrhonization for an account
 client.getLastSynchronizationByAccount(account_id, callback);
+//acknowledge synchronization by account
+client.acknowledgeSynchronizationForAccount(account_id, acknowledgement, callback);
+
 
 //search documents by account, user, pending with or without content
-client.searchDocuments(options, callback)
+client.searchDocuments(options, callback);
 //get a specific downloaded document
-client.getDocument(document_id, callback)
+client.getDocument(document_id, callback);
+//acknowledge the reception of a specific document
+client.acknowledgeDocumentDelivery(document_id, callback);
+//get documents by account id
+client.getDocumentsByAccount(options, account_id, callback);
+
 ```
 
 All parameters except options are required. If the options parameter is omitted, the last argument to the function will be interpreted as the callback.
