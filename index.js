@@ -293,9 +293,7 @@ CloudAgents.Client.prototype.acknowledgeDocumentDelivery = function(document_id,
     this._authenticatedRequest({
         uri: this.env + '/documents/' + document_id + '/ack',
         method: 'PUT',
-        body: {
-            id: document_id
-        }
+        body: document_id
     }, callback);
 };
 
