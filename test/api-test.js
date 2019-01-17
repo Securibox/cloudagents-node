@@ -2,21 +2,27 @@
 
 var assert = require('assert');
 var R = require('ramda');
-var CloudAgents = require('../');
+var CloudAgents = require('../lib/client');
+//var BearerStrategy = require('../lib/strategies/bearer');
+var BasicStrategy = require('../lib/strategies/bearer');
 
 var eq = assert.strictEqual;
 
-var environment = 'https://sca-testenv.securibox.eu/api/v1/';
+var environment = 'https://sca-testenv.securibox.eu/api/v1';
 var api_username = 'username';
 var api_password = 'password';
 
-var client = new CloudAgents.Client(api_username, api_password, environment);
+
+//var strategy = new BearerStrategy("tokenadasdasd");
+var strategy = new BasicStrategy(api_username, api_password);
+var client = new CloudAgents(environment);
+client.use(strategy);
 
 describe('Categories', function() {
   it('List all categories', function(done) {
         client.getCategories(function(err, res) {
             eq(err, null);
-
+            
             assert(R.is(Array, res));
 
             done();
@@ -68,9 +74,7 @@ describe('Agents', function() {
     it('Get agents by category [Finance]', function(done) {
         client.getAgentsByCategory("c83e6fbc06433f54cea00d8bd6fb2395", function(err, res) {
             eq(err, null);
-
             assert(R.is(Array, res));
-
             done();
         });
     });
@@ -80,14 +84,16 @@ describe('Agents', function() {
 
 describe('Accounts', function() {
     var user_id = "UserABCDE";
-    var account_id = "AccountADBCDE";
-    var agent_id = "959ad16ef0f9440aaaa3dfad90b25948";
-    it('Create account BricoPrive', function(done) {
+    let d = new Date();
+    var account_id = "AccountADBCDE" + d.getTime();
+    var agent_id = "2ac0260f256e4d9fad963ac769b084cd";
+    var account_name = "Test Prixtel";
+    it('Create account Prixtel', function(done) {
         this.timeout(0);
-        var account = {
+        let account = {
           customerAccountId: account_id,
           customerUserId: user_id,
-          name: "Test BricoPrive",
+          name: account_name,
           agentId: agent_id,
           credentials: [
               {
@@ -102,16 +108,16 @@ describe('Accounts', function() {
                   alg: null
               }
           ]  
-        }
+        };
         client.createAccount(account, function(err, res) {
             eq(err, null);
             assert(R.is(Object, res));
-            assert(res.agentId == agent_id && res.name == "Test BricoPrive", "The returned account is not correct.");
+            assert(res.agentId == agent_id && res.name == account_name, "The returned account is not correct.");
             done();
         });
     });
 
-    it('Get BricoPrive account synchronization', function(done) {
+    it('Get PrixTel account synchronization', function(done) {
         this.timeout(0);
         client.getLastSynchronizationByAccount(account_id, function(err, res){
             eq(err, null);
