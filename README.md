@@ -14,20 +14,30 @@ The module supports all Cloud Agents API endpoints. For complete information abo
 
 ## Endpoints
 
-All endpoints require a valide username and password provided by the Securibox team to access.
+All endpoints require a valid authentication strategy provided by the Securibox team to access (basic or bearer/JWT).
 
 ```javascript
-var cloudagents = require('cloudagents');
+var CloudAgents = require('cloudagents');
 
-var client = new cloudagents.Client(api_username, api_password, cloudagents_env);
+var client = new CloudAgents.Client(cloudagents_env);
+var authStrategy = new CloudAgents.BasicStrategy(api_username, api_password);
+//or authStrategy = new CloudAgents.BearerStrategy("[token]");
+client.use(authStrategy);
+
 ```
 
 Once an instance of the client has been created you use the following methods:
 ```javascript
-var cloudagents = require('cloudagents');
+var CloudAgents = require('cloudagents');
 
 // Initialize client
-var client = new cloudagents.Client(api_username, api_password, cloudagents_env);
+var client = new CloudAgents.Client(cloudagents_env);
+
+// Initialize authentication strategy
+var authStrategy = new CloudAgents.BasicStrategy(api_username, api_password);
+
+// Bind authentication strategy to client
+client.use(authStrategy);
 
 //list all categories
 client.getCategories(callback);
@@ -91,12 +101,14 @@ function callback(err, response) {
 Collect invoices from DropBox:
 
 ```javascript
-var cloudagents = require('cloudagents');
+var CloudAgents = require('cloudagents');
 
-var environment = "https://api-cloudagents.securibox.eu/api/v1/";
+var environment = "https://sca-multitenant-prod.securibox.eu/api/v1/";
 
 // Initialize client
-var client = new cloudagents.Client('api_username', 'api_password', environment);
+var client = new CloudAgents.Client(environment);
+var basicAuthentication = new CloudAgents.BasicStrategy('api_username', 'api_password');
+client.use(basicAuthentication);
 
 //Account to create
 var account = {
@@ -132,9 +144,9 @@ client.createAccount(account, function(err, res) {
 var interval = setInterval(function(){
     client.getLastSynchronizationByAccount(account.customerAccountId, function(err, res){            
         eq(err, null);
-            if(res.synchronizationState == CloudAgents.enums.synchronizationState.PendingAcknowledgement ||
-                res.synchronizationState == CloudAgents.enums.synchronizationState.Completed ||
-                res.synchronizationState == CloudAgents.enums.synchronizationState.ReportFailed){
+			if(res.synchronizationState == CloudAgents.Constants.synchronizationState.PendingAcknowledgement ||
+				res.synchronizationState == CloudAgents.Constants.synchronizationState.Completed ||
+				res.synchronizationState == CloudAgents.Constants.synchronizationState.ReportFailed){
                 clearInterval(interval);
             }
     })
