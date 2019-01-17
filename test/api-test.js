@@ -2,9 +2,7 @@
 
 var assert = require('assert');
 var R = require('ramda');
-var CloudAgents = require('../lib/client');
-//var BearerStrategy = require('../lib/strategies/bearer');
-var BasicStrategy = require('../lib/strategies/bearer');
+var CloudAgents = require('../lib');
 
 var eq = assert.strictEqual;
 
@@ -13,9 +11,9 @@ var api_username = 'username';
 var api_password = 'password';
 
 
-//var strategy = new BearerStrategy("tokenadasdasd");
-var strategy = new BasicStrategy(api_username, api_password);
-var client = new CloudAgents(environment);
+//var strategy = new CloudAgents.BearerStrategy("tokenadasdasd");
+var strategy = new CloudAgents.BasicStrategy(api_username, api_password);
+var client = new CloudAgents.Client(environment);
 client.use(strategy);
 
 describe('Categories', function() {
@@ -129,14 +127,14 @@ describe('Accounts', function() {
     });
 
 
-    it('Complete BricoPrive account synchronization', function(done) {
+    it('Complete PrixTel account synchronization', function(done) {
         this.timeout(300000)
         var interval = setInterval(function(){
             client.getLastSynchronizationByAccount(account_id, function(err, res){            
                 eq(err, null);
-                if(res.synchronizationState == CloudAgents.enums.synchronizationState.PendingAcknowledgement ||
-                    res.synchronizationState == CloudAgents.enums.synchronizationState.Completed ||
-                    res.synchronizationState == CloudAgents.enums.synchronizationState.ReportFailed){
+                if(res.synchronizationState == CloudAgents.Constants.synchronizationState.PendingAcknowledgement ||
+                    res.synchronizationState == CloudAgents.Constants.synchronizationState.Completed ||
+                    res.synchronizationState == CloudAgents.Constants.synchronizationState.ReportFailed){
                         clearInterval(interval);
                         done();
                     }
@@ -144,7 +142,7 @@ describe('Accounts', function() {
         }, 10000);
     });
 
-    it('Delete BricoPrive account', function(done){
+    it('Delete PrixTel account', function(done){
         this.timeout(0);
         client.deleteAccount(account_id, function(err, res){
             eq(err, null);
