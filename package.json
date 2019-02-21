@@ -16,6 +16,7 @@
   "bugs": {
     "url": "http://github.com/securibox/cloudagents-node/issues"
   },
+  "main": "lib/index.js",
   "licenses": [
     {
       "type": "GNU GPL",
