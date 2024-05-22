@@ -1,38 +1,38 @@
 {
-  "name": "cloudagents",
-  "version": "1.1.1",
-  "description": "A node.js client for the Securibox Cloud Agents API",
-  "keywords": [
-    "Securibox",
-    "Cloud Agents",
-    "Agents",
-    "SCA",
-    "Securibox Cloud Agents"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/securibox/cloudagents-node.git"
-  },
-  "bugs": {
-    "url": "http://github.com/securibox/cloudagents-node/issues"
-  },
-  "main": "lib/index.js",
-  "licenses": [
-    {
-      "type": "GNU GPL",
-      "url": "https://github.com/securibox/cloudagents-node/blob/master/LICENSE"
+    "name": "cloudagents",
+    "version": "1.1.2",
+    "description": "A node.js client for the Securibox Cloud Agents API",
+    "keywords": [
+        "Securibox",
+        "Cloud Agents",
+        "Agents",
+        "SCA",
+        "Securibox Cloud Agents"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/securibox/cloudagents-node.git"
+    },
+    "bugs": {
+        "url": "http://github.com/securibox/cloudagents-node/issues"
+    },
+    "main": "lib/index.js",
+    "licenses": [
+        {
+            "type": "GNU GPL",
+            "url": "https://github.com/securibox/cloudagents-node/blob/master/LICENSE"
+        }
+    ],
+    "dependencies": {
+        "ramda": "0.30.x",
+        "request": "2.74.x",
+        "querystring": "0.2.x"
+    },
+    "devDependencies": {
+        "assert": "2.1.x",
+        "mocha": "10.4.x"
+    },
+    "scripts": {
+        "test": "mocha"
     }
-  ],
-  "dependencies": {
-    "ramda": "0.19.x",
-    "request": "2.74.x",
-    "querystring": "0.2.x"
-  },
-  "devDependencies": {
-    "assert": "1.4.x",
-    "mocha": "2.3.x"
-  },
-  "scripts": {
-    "test": "mocha"
-  }
 }
