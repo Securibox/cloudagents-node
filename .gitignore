@@ -1,2 +1,9 @@
 /node_modules/
 /.vscode/
+
+# Ignore package-lock.json
+package-lock.json
+
+# Other ignore rules
+.DS_Store
+*.log
