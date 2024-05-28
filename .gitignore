@@ -7,3 +7,4 @@ package-lock.json
 # Other ignore rules
 .DS_Store
 *.log
+package-lock.json
