@@ -1,26 +1,23 @@
-'use strict';
+import assert from 'node:assert/strict';
+import * as R from 'ramda';
+import CloudAgents from '../lib/index.js';
 
-var assert = require('node:assert');
-var R = require('ramda');
-var CloudAgents = require('../lib');
+const eq = assert.strictEqual;
 
-var eq = assert.strictEqual;
-
-var environment = 'https://sca-testenv.securibox.eu/api/v1';
-var api_username = 'username';
-var api_password = 'password';
+const environment = 'https://sca-testenv.securibox.eu/api/v1';
+const api_username = 'username';
+const api_password = 'password';
 
 
-//var strategy = new CloudAgents.BearerStrategy("tokenadasdasd");
-var strategy = new CloudAgents.BasicStrategy(api_username, api_password);
-var client = new CloudAgents.Client(environment);
+const strategy = new CloudAgents.BasicStrategy(api_username, api_password);
+const client = new CloudAgents.Client(environment);
 client.use(strategy);
 
 describe('Categories', function () {
     it('List all categories', function (done) {
         client.getCategories(function (err, res) {
+            console.log(err);
             eq(err, null);
-
             assert(R.is(Array, res));
 
             done();
@@ -42,13 +39,13 @@ describe('Agents', function () {
 
     // it('Search agents by country [PT]', function(done) {
     //     this.timeout(0);
-    //     var options = {
+    //     let options = {
     //         country: "PT" 
     //     }
     //     client.searchAgents(options, function(err, res) {
     //         eq(err, null);
     //         assert(R.is(Array, res));
-    //         var frenchAgent = R.find(R.propEq('id', 'ea23933398ae41418b50b8097742346b'))(res);
+    //         let frenchAgent = R.find(R.propEq('id', 'ea23933398ae41418b50b8097742346b'))(res);
     //         assert(frenchAgent == undefined, "A french agent has been found")
     //         done();
     //     });
@@ -56,7 +53,7 @@ describe('Agents', function () {
 
     it('Search agents with culture [en-GB]', function (done) {
         this.timeout(0);
-        var options = {
+        const options = {
             culture: "en-GB"
         };
         client.searchAgents(options, function (err, res) {
@@ -81,11 +78,11 @@ describe('Agents', function () {
 
 
 describe('Accounts', function () {
-    var user_id = "UserABCDE";
+    let user_id = "UserABCDE";
     let d = new Date();
-    var account_id = "AccountADBCDE" + d.getTime();
-    var agent_id = "2ac0260f256e4d9fad963ac769b084cd";
-    var account_name = "Test Prixtel";
+    let account_id = "AccountADBCDE" + d.getTime();
+    let agent_id = "2ac0260f256e4d9fad963ac769b084cd";
+    let account_name = "Test Prixtel";
     it('Create account Prixtel', function (done) {
         this.timeout(0);
         let account = {
@@ -129,7 +126,7 @@ describe('Accounts', function () {
 
     it('Complete PrixTel account synchronization', function (done) {
         this.timeout(300000);
-        var interval = setInterval(function () {
+        let interval = setInterval(function () {
             client.getLastSynchronizationByAccount(account_id, function (err, res) {
                 eq(err, null);
                 if (res.synchronizationState == CloudAgents.Constants.synchronizationState.PendingAcknowledgement ||
