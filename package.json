@@ -1,6 +1,6 @@
 {
     "name": "cloudagents",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "type": "module",
     "description": "A node.js client for the Securibox Cloud Agents API",
     "keywords": [
